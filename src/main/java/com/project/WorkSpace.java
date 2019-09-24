@@ -1,5 +1,7 @@
 package com.project;
 
+import com.project.priority.Priority;
+
 import java.util.*;
 
 /**
@@ -31,14 +33,13 @@ public class WorkSpace {
      * @return subject that was put in
      */
     public Subject putInSubject(Subject subject) {
-        if (isDesiredObjectsEmpty(subject)) {
-            setObjectsToSubject(subject);
-        } else {
-            grabEmptyObjects(subject);
+        grabEmptyOrLowPriorityObjects(subject);
+        if (subject.getObjectsCount() != subject.getDesiredObjectIds().size()) {
             if (!subject.isLazy()) {
                 findSolution(subject);
             }
         }
+
 
         if (subject.getObjectsCount() > 0) {
             addSubject(subject);
@@ -52,10 +53,19 @@ public class WorkSpace {
         Subject subject = new Subject.Builder(2, 3, 5, 9).build();
         workSpace.putInSubject(subject);
 
-        subject = new Subject.Builder(0, 1, 4, 6, 7, 8).build();
+        subject = new Subject.Builder(1, 6).priority(Priority.LOW).build();
         workSpace.putInSubject(subject);
 
-        subject = new Subject.Builder(2, 4, 6).build();
+        subject = new Subject.Builder(0, 1, 4, 7, 8).build();
+        workSpace.putInSubject(subject);
+
+        subject = new Subject.Builder(2, 4).build();
+        workSpace.putInSubject(subject);
+
+        subject = new Subject.Builder(6).build();
+        workSpace.putInSubject(subject);
+
+        subject = new Subject.Builder(0, 1, 3).build();
         workSpace.putInSubject(subject);
     }
 
@@ -63,17 +73,21 @@ public class WorkSpace {
         Set<Subject> contenders;
         while (true) {
             contenders = findContenders(subject);
-            Subject theBiggest = contenders.stream()
-                    .max(Comparator.comparingInt(Subject::getObjectsCount))
-                    .orElse(new Subject.Builder().build());
-            if (theBiggest.getObjectsCount() - subject.getObjectsCount() > 1) {
-                for (Integer desiredObjectId : subject.getDesiredObjectIds()) {
-                    Object desiredObject = objects.get(desiredObjectId);
-                    if (theBiggest.getObjects().contains(desiredObject)) {
-                        theBiggest.removeObject(desiredObject);
-                        subject.addObject(desiredObject);
-                        break;
+            if (!contenders.isEmpty()) {
+                Subject theBiggest = contenders.stream()
+                        .max(Comparator.comparingInt(Subject::getObjectsCount))
+                        .orElse(new Subject.Builder().build());
+                if (theBiggest.getObjectsCount() - subject.getObjectsCount() > 1) {
+                    for (Integer desiredObjectId : subject.getDesiredObjectIds()) {
+                        Object desiredObject = objects.get(desiredObjectId);
+                        if (theBiggest.getObjects().contains(desiredObject)) {
+                            theBiggest.removeObject(desiredObject);
+                            subject.addObject(desiredObject);
+                            break;
+                        }
                     }
+                } else {
+                    break;
                 }
             } else {
                 break;
@@ -85,7 +99,7 @@ public class WorkSpace {
         Set<Subject> contendersAndObjectsCount = new HashSet<>();
         for (Integer desiredObjectId : subject.getDesiredObjectIds()) {
             Object object = objects.get(desiredObjectId);
-            if (!object.isFree() && !object.getOwner().equals(subject)) {
+            if (!object.isFree() && !object.getOwner().equals(subject) && !isMoreImportant(object.getOwner(), subject)) {
                 Subject owner = object.getOwner();
                 contendersAndObjectsCount.add(owner);
             }
@@ -94,34 +108,21 @@ public class WorkSpace {
         return contendersAndObjectsCount;
     }
 
-    protected void grabEmptyObjects(Subject subject) {
+    protected void grabEmptyOrLowPriorityObjects(Subject subject) {
         for (Integer desiredObjectId : subject.getDesiredObjectIds()) {
             Object object = objects.get(desiredObjectId);
             if (object.isFree()) {
+                subject.addObject(object);
+            } else if (isMoreImportant(subject, object.getOwner())) {
+                Subject owner = object.getOwner();
+                owner.removeObject(object);
                 subject.addObject(object);
             }
         }
     }
 
-    protected boolean isDesiredObjectsEmpty(Subject subject) {
-        boolean allEmpty = true;
-        List<Integer> desiredObjectIds = subject.getDesiredObjectIds();
-        for (Integer objectId : desiredObjectIds) {
-            Object object = objects.get(objectId);
-            if (!object.isFree()) {
-                allEmpty = false;
-                break;
-            }
-        }
-
-        return allEmpty;
-    }
-
-    protected void setObjectsToSubject(Subject subject) {
-        for (Integer desiredObjectId : subject.getDesiredObjectIds()) {
-            Object desiredObject = objects.get(desiredObjectId);
-            subject.addObject(desiredObject);
-        }
+    private boolean isMoreImportant(Subject subject1, Subject subject2) {
+        return subject1.getPriority().getLevel() > subject2.getPriority().getLevel();
     }
 
     /**

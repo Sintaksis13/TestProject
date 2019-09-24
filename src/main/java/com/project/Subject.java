@@ -35,10 +35,6 @@ public class Subject {
         return desiredObjectIds;
     }
 
-    public void deleteDesiredObjectId(Integer desiredObjectId) {
-        desiredObjectIds.remove(desiredObjectId);
-    }
-
     public List<Object> getObjects() {
         return objects;
     }
