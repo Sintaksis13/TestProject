@@ -28,6 +28,7 @@ public class Subject {
 
     public Object removeObject(Object object) {
         objects.remove(object);
+        object.setOwner(null);
         return object;
     }
 

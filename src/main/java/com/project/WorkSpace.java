@@ -50,23 +50,25 @@ public class WorkSpace {
 
     public static void main(String[] args) {
         WorkSpace workSpace = new WorkSpace();
-        Subject subject = new Subject.Builder(2, 3, 5, 9).build();
-        workSpace.putInSubject(subject);
+        Subject subject1 = new Subject.Builder(2, 3, 5, 9).build();
+        workSpace.putInSubject(subject1);
 
-        subject = new Subject.Builder(1, 6).priority(Priority.LOW).build();
-        workSpace.putInSubject(subject);
+        Subject subject2 = new Subject.Builder(1, 6).priority(Priority.LOW).build();
+        workSpace.putInSubject(subject2);
 
-        subject = new Subject.Builder(0, 1, 4, 7, 8).build();
-        workSpace.putInSubject(subject);
+        Subject subject3 = new Subject.Builder(0, 1, 4, 7, 8).build();
+        workSpace.putInSubject(subject3);
 
-        subject = new Subject.Builder(2, 4).build();
-        workSpace.putInSubject(subject);
+        Subject subject4 = new Subject.Builder(2, 4).build();
+        workSpace.putInSubject(subject4);
 
-        subject = new Subject.Builder(6).build();
-        workSpace.putInSubject(subject);
+        Subject subject5 = new Subject.Builder(6).build();
+        workSpace.putInSubject(subject5);
 
-        subject = new Subject.Builder(0, 1, 3).build();
-        workSpace.putInSubject(subject);
+        Subject subject6 = new Subject.Builder(0, 1, 3).build();
+        workSpace.putInSubject(subject6);
+
+        workSpace.putOutSubject(subject3);
     }
 
     protected void findSolution(Subject subject) {
@@ -131,7 +133,13 @@ public class WorkSpace {
      * @return subject that was put out
      */
     public Subject putOutSubject(Subject subject) {
+        for (Object object : objects) {
+            if (object.getOwner().equals(subject)) {
+                subject.removeObject(object);
+            }
+        }
 
+        subjects.remove(subject);
         return subject;
     }
 
