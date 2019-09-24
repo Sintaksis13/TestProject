@@ -8,8 +8,23 @@ import java.util.List;
  * @since 23.09.2019
  */
 public class WorkSpace {
-    private final List<Object> objects = new ArrayList<>();
-    private final List<Subject> subjects = new ArrayList<>();
+    private static final int MAX_OBJECTS = 10;
+    private final List<Object> objects;
+    private final List<Subject> subjects;
+
+    public WorkSpace() {
+        this.subjects = new ArrayList<>();
+        this.objects = generateObjects(MAX_OBJECTS);
+    }
+
+    /**
+     * For test purposes only
+     * @param subjects list of subjects
+     */
+    public WorkSpace(List<Subject> subjects) {
+        this.subjects = subjects;
+        this.objects = generateObjects(MAX_OBJECTS);
+    }
 
     /** Starts execution of the application workflow
      * @param objectsCount count of objects should be created
@@ -17,16 +32,15 @@ public class WorkSpace {
      * @param steps count of algorithm steps
      */
     public void startApplication(int objectsCount, int subjectsCount, int steps) {
-        fillUpObjects(objectsCount);
-        //possibly this method is unnecessary because subjects should be added manually
-        fillUpSubjects(subjectsCount);
+        generateObjects(objectsCount);
     }
 
     /** Fills up objects list with instances
      * @param count describes count of objects need to be created
      * @return object list filled up
      */
-    protected List<Object> fillUpObjects(int count) {
+    protected List<Object> generateObjects(int count) {
+        List<Object> objects = new ArrayList<>();
         for (int index = 0; index < count; index++) {
             objects.add(new Object(index));
         }
@@ -34,15 +48,21 @@ public class WorkSpace {
         return objects;
     }
 
-    /** Fills up subjects list with instances
-     * @param count describes count of subjects need to be created
-     * @return subject list filled up
-     */
-    protected List<Subject> fillUpSubjects(int count) {
-        for (int index = 0; index < count; index++) {
-            subjects.add(new Subject());
-        }
+    protected Subject addSubject(Subject subject) {
+        subjects.add(subject);
+        return subject;
+    }
 
+    protected Subject removeSubject(Subject subject) {
+        subjects.remove(subject);
+        return subject;
+    }
+
+    public List<Subject> getSubjects() {
         return subjects;
+    }
+
+    public List<Object> getObjects() {
+        return objects;
     }
 }
