@@ -26,6 +26,10 @@ public class Object {
         this.owner = owner;
     }
 
+    public boolean isFree() {
+        return owner == null;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) return true;

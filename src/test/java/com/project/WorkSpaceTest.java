@@ -17,7 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class WorkSpaceTest {
     private static final int COUNT = 5;
     private static WorkSpace workSpace;
-    private static Subject testSubject = new Subject.Builder()
+    private static final Integer[] objectIds = {1, 2, 3};
+    private static final Subject testSubject = new Subject.Builder(objectIds)
             .lazy(true)
             .priority(Priority.LOW)
             .build();
@@ -31,7 +32,7 @@ class WorkSpaceTest {
      * Verifies objects count after method invocation
      */
     @Test
-    void testFillUpObjectsCount() {
+    void testGenerateObjects() {
         List<Object> objects = workSpace.generateObjects(COUNT);
         assertEquals(objects.size(), COUNT, "Objects count is invalid!");
     }
@@ -57,6 +58,18 @@ class WorkSpaceTest {
         assertFalse(workSpace.getSubjects().contains(removedSubject));
     }
 
+    @Test
+    void testPutInSubject() {
+    }
+
+    @Test
+    void testPutOutSubject() {
+    }
+
+    @Test
+    void testDesiredObjectsEmpty() {
+    }
+
     /**
      * Generate subjects list for WorkSpace class test constructor
      * @return subjects list
@@ -65,5 +78,14 @@ class WorkSpaceTest {
         List<Subject> subjects = new ArrayList<>();
         subjects.add(testSubject);
         return subjects;
+    }
+
+    private List<Object> getObjectsByIds() {
+        List<Object> objects = new ArrayList<>();
+        for (Integer objectId : objectIds) {
+            objects.add(workSpace.getObjects().get(objectId));
+        }
+
+        return objects;
     }
 }
