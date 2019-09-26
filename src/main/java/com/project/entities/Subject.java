@@ -1,35 +1,43 @@
-package com.project;
+package com.project.entities;
 
-import com.project.priority.Priority;
+import com.project.entities.priority.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * The {@code Subject} class is a representation of the subject element from the test task and
+ * implements "builder" pattern via {@code Subject.Builder} class.
+ * Field {@link #active} means subject will be contesting for the objects.
+ * Also {@code Subject} class provides a couple of methods to remove ({@link #removeObject(Object)} object from
+ * the {@link #objects} and add ({@link #addObject(Object)}) objects to the {@link #objects}.
+ *
+ * @author Rinat Abdullin
+ * @see Object
+ */
 public class Subject {
     private final List<Integer> desiredObjectIds;
     private final List<Object> objects;
     private final Priority priority;
-    private final boolean lazy;
+    private final boolean active;
 
     private Subject(Builder builder) {
         this.desiredObjectIds = builder.getObjectIds();
         this.priority = builder.getPriority();
-        this.lazy = builder.isLazy();
+        this.active = builder.isActive();
         this.objects = new ArrayList<>();
     }
 
-    public Object addObject(Object object) {
+    public void addObject(Object object) {
         object.setOwner(this);
         objects.add(object);
-        return object;
     }
 
-    public Object removeObject(Object object) {
-        objects.remove(object);
+    public void removeObject(Object object) {
         object.setOwner(null);
-        return object;
+        objects.remove(object);
     }
 
     public List<Integer> getDesiredObjectIds() {
@@ -39,6 +47,7 @@ public class Subject {
     public List<Object> getObjects() {
         return objects;
     }
+
     public int getObjectsCount() {
         return objects.size();
     }
@@ -47,14 +56,14 @@ public class Subject {
         return priority;
     }
 
-    public boolean isLazy() {
-        return lazy;
+    public boolean isActive() {
+        return active;
     }
 
     public static class Builder {
         private final List<Integer> objectIds;
         private Priority priority = Priority.NORMAL;
-        private boolean lazy = false;
+        private boolean active = true;
 
         public Builder(Integer... objectIds) {
             this.objectIds = Arrays.asList(objectIds);
@@ -65,20 +74,20 @@ public class Subject {
             return this;
         }
 
-        public Builder lazy(boolean lazy) {
-            this.lazy = lazy;
+        public Builder active(boolean active) {
+            this.active = active;
             return this;
         }
 
-        public boolean isLazy() {
-            return lazy;
+        boolean isActive() {
+            return active;
         }
 
-        public Priority getPriority() {
+        Priority getPriority() {
             return priority;
         }
 
-        public List<Integer> getObjectIds() {
+        List<Integer> getObjectIds() {
             return objectIds;
         }
 
@@ -92,7 +101,7 @@ public class Subject {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Subject subject = (Subject) o;
-        return lazy == subject.lazy &&
+        return active == subject.active &&
                 desiredObjectIds.equals(subject.desiredObjectIds) &&
                 Objects.equals(objects, subject.objects) &&
                 priority == subject.priority;
@@ -100,6 +109,6 @@ public class Subject {
 
     @Override
     public int hashCode() {
-        return Objects.hash(desiredObjectIds, objects, priority, lazy);
+        return Objects.hash(desiredObjectIds, objects, priority, active);
     }
 }
