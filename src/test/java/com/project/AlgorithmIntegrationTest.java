@@ -21,7 +21,7 @@ public class AlgorithmIntegrationTest {
     private static final int COUNT = 10;
     private static Distributor distributor = new Distributor(COUNT);
     private static WorkSpace workSpace = new WorkSpace(distributor);
-    private static Subject firstSubject = new Subject.Builder(2, 3, 5, 9).build();
+    private static Subject firstSubject = new Subject.Builder(2, 3, 5, 19).build();
     private static Subject secondSubject = new Subject.Builder(1, 6).priority(Priority.LOW).build();
     private static Subject thirdSubject = new Subject.Builder(0, 1, 4, 7, 8).build();
     private static Subject fourthSubject = new Subject.Builder(2, 4).build();

@@ -26,7 +26,7 @@ public class DistributorTest {
     private Subject subjectForCleanUp = new Subject.Builder().build();
     private Subject testSubject;
 
-    private static Distributor distributor;
+    private Distributor distributor;
 
     @Before
     public void setUp() {

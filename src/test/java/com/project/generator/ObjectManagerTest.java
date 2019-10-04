@@ -11,7 +11,7 @@ public class ObjectManagerTest {
     @Test
     public void testGenerateObjects() {
         int count = 10;
-        List<Object> objects = ObjectManager.INSTANCE.generateObjects(count);
+        List<Object> objects = ObjectManager.generateObjects(count);
         assertEquals(count, objects.size());
     }
 }

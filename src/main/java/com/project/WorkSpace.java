@@ -29,13 +29,14 @@ public class WorkSpace {
      * Responsible for subject injection into the algorithm execution
      * @param subject put in the algorithm workflow
      */
-    protected void putInSubject(Subject subject) {
+    public void putInSubject(Subject subject) {
         distributor.grabEmptyOrLowPriorityObjects(subject);
         if (subject.getObjectsCount() != subject.getDesiredObjectIds().size()) {
             if (subject.isActive()) {
                 distributor.findSolution(subject);
             }
         }
+
 
         addSubject(subject);
     }
@@ -44,7 +45,7 @@ public class WorkSpace {
      * Responsible for subject removing from the algorithm execution
      * @param subject put out from the algorithm workflow
      */
-    protected void putOutSubject(Subject subject) {
+    public void putOutSubject(Subject subject) {
         distributor.cleanUpObjects(subject);
         removeSubject(subject);
     }

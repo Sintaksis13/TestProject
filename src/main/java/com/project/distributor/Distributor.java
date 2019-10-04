@@ -18,14 +18,14 @@ public class Distributor {
     private final List<Object> objects;
 
     public Distributor(int objectsCount) {
-        this.objects = ObjectManager.INSTANCE.generateObjects(objectsCount);
+        this.objects = ObjectManager.generateObjects(objectsCount);
     }
 
     /**
      * For test purpose only
      * @param objects test object list
      */
-    public Distributor(List<Object> objects) {
+    protected Distributor(List<Object> objects) {
         this.objects = objects;
     }
 
@@ -37,6 +37,10 @@ public class Distributor {
                 Subject theBiggest = getTheBiggestSubject(contenders);
                 if (theBiggest.getObjectsCount() - subject.getObjectsCount() > 1) {
                     for (Integer desiredObjectId : subject.getDesiredObjectIds()) {
+                        if (isIdNotValid(desiredObjectId)) {
+                            continue;
+                        }
+
                         Object desiredObject = objects.get(desiredObjectId);
                         if (theBiggest.getObjects().contains(desiredObject)) {
                             theBiggest.removeObject(desiredObject);
@@ -56,6 +60,10 @@ public class Distributor {
     protected Set<Subject> findContenders(Subject subject) {
         Set<Subject> contenders = new HashSet<>();
         for (Integer desiredObjectId : subject.getDesiredObjectIds()) {
+            if (isIdNotValid(desiredObjectId)) {
+                continue;
+            }
+
             Object object = objects.get(desiredObjectId);
             if (!object.isFree() && !object.getOwner().equals(subject)) {
                 Subject owner = object.getOwner();
@@ -74,10 +82,14 @@ public class Distributor {
 
     public void grabEmptyOrLowPriorityObjects(Subject subject) {
         for (Integer desiredObjectId : subject.getDesiredObjectIds()) {
+            if (isIdNotValid(desiredObjectId)) {
+                continue;
+            }
+
             Object object = objects.get(desiredObjectId);
             if (object.isFree()) {
                 subject.addObject(object);
-            } else if (subject.getPriority().isMoreImportant(object.getOwner()) && subject.isActive()) {
+            } else if (subject.getPriority().isMoreImportant(object.getOwner().getPriority()) && subject.isActive()) {
                 Subject owner = object.getOwner();
                 owner.removeObject(object);
                 subject.addObject(object);
@@ -86,10 +98,12 @@ public class Distributor {
     }
 
     public void cleanUpObjects(Subject subject) {
-        for (Object object : objects) {
-            if (subject.equals(object.getOwner())) {
-                subject.removeObject(object);
-            }
+        for (Object object : subject.getObjects()) {
+            subject.removeObject(object);
         }
+    }
+
+    private boolean isIdNotValid(Integer id) {
+        return id >= objects.size();
     }
 }

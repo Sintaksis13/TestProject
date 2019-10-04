@@ -20,10 +20,10 @@ public enum Priority {
 
     /**
      * Determines is provided subject less important then the targeted one or not.
-     * @param subject needs to compare his importance.
+     * @param priority needs to compare it with current priority.
      * @return true if target more important and false if provided subject is more important.
      */
-    public boolean isMoreImportant(Subject subject) {
-        return this.level > subject.getPriority().level;
+    public boolean isMoreImportant(Priority priority) {
+        return this.level > priority.level;
     }
 }

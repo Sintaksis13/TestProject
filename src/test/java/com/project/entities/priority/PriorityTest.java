@@ -14,11 +14,11 @@ public class PriorityTest {
 
     @Test
     public void testIsMoreImportant() {
-        assertTrue(normalPrioritySubject.getPriority().isMoreImportant(lowPrioritySubject));
+        assertTrue(normalPrioritySubject.getPriority().isMoreImportant(lowPrioritySubject.getPriority()));
     }
 
     @Test
     public void testIsLessImportant() {
-        assertFalse(lowPrioritySubject.getPriority().isMoreImportant(normalPrioritySubject));
+        assertFalse(lowPrioritySubject.getPriority().isMoreImportant(normalPrioritySubject.getPriority()));
     }
 }
